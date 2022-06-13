@@ -6,7 +6,7 @@
 /*   By: pbeheyt <pbeheyt@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 04:41:58 by pbeheyt           #+#    #+#             */
-/*   Updated: 2022/06/10 04:41:59 by pbeheyt          ###   ########.fr       */
+/*   Updated: 2022/06/13 00:11:22 by pbeheyt          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,6 @@
 # include "libft.h"
 
 int		ft_atoi(const char *str);
-void	ft_putstr_fd(char c, int fd);
+void	ft_putstr_fd(char *s, int fd);
 
 #endif

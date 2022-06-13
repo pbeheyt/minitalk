@@ -6,21 +6,29 @@
 /*   By: pbeheyt <pbeheyt@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 04:41:47 by pbeheyt           #+#    #+#             */
-/*   Updated: 2022/06/10 04:49:14 by pbeheyt          ###   ########.fr       */
+/*   Updated: 2022/06/13 05:01:43 by pbeheyt          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "client.h"
+
+int g_signal_received;
+
+static void signal_handler(int i)
+{
+    (void)i;
+    g_signal_received = 1;
+    
+}
 
 static int  check_input(int ac, char **av)
 {
     int     i;
-    char    *input;
+    char    *pid;
     char    *base;
 
-    input = av[1];
-    base = "123456789";
+    pid = av[1];
+    base = "0123456789";
 
     if (ac != 3)
     {
@@ -28,9 +36,9 @@ static int  check_input(int ac, char **av)
         return(0);
     }
     i = -1;
-    while (input[++i])
+    while (pid[++i])
     {
-        if (!ft_strchr(base, input[i]))
+        if (!ft_strchr(base, pid[i]))
         {
             ft_putstr_fd("Error : unvalid PID\n", 1);
             return(0);
@@ -39,20 +47,22 @@ static int  check_input(int ac, char **av)
     return (1);
 }
 
-void send_input(unsigned char c, int pid)
+static void send_input(unsigned char c, int pid)
 {
     int i;
     int signal;
     
-    i = -1;
-    while(++i <= 7)
+    i = 8;
+    while(i--)
     {
-        signal = c & (1 << 7);
+        g_signal_received = 0;
+        signal = c & (1 << i);
         if (signal)
             kill(pid,SIGUSR1);
-        else if (!signal)
+        else
             kill(pid, SIGUSR2);
-        c = c >> 1;
+        while (!g_signal_received)
+            pause();
     }
 }
 
@@ -63,14 +73,14 @@ int main(int ac, char **av)
     
     if (!check_input(ac, av))
         return (0);
+    signal(SIGUSR1, signal_handler);
     pid = ft_atoi(av[1]);
-    if (pid <= 0)
-    {
-        ft_putstr_fd("Error : unvalid PID\n", 1);
-        return (0);
-    }
     input = av[2];
     while (*input)
+    {
         send_input(*input, pid);
+        input++;
+    }    
+    send_input(0, pid);
     return (1);
 }
