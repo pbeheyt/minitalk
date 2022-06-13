@@ -6,7 +6,7 @@
 /*   By: pbeheyt <pbeheyt@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 04:41:40 by pbeheyt           #+#    #+#             */
-/*   Updated: 2022/06/13 07:08:01 by pbeheyt          ###   ########.fr       */
+/*   Updated: 2022/06/14 01:45:19 by pbeheyt          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ static	void	gather_chars_and_print_output(siginfo_t *siginfo)
 	g_data.char_received = 0;
 }
 
-static	void	signal_handler(int signal, siginfo_t *siginfo, void *oldact)
+static	void	signal_handler(int signum, siginfo_t *siginfo, void *oldact)
 {
 	(void)oldact;
-	if (signal == SIGUSR1 && g_data.bits_received <= 7)
+	if (signum == SIGUSR1 && g_data.bits_received <= 7)
 		g_data.char_received |= (1 << (7 - g_data.bits_received++));
-	if (signal == SIGUSR2 && g_data.bits_received <= 7)
+	if (signum == SIGUSR2 && g_data.bits_received <= 7)
 		g_data.char_received &= ~(1 << (7 - g_data.bits_received++));
 	if (g_data.bits_received == 8)
 		gather_chars_and_print_output(siginfo);
@@ -56,6 +56,8 @@ int	main(int ac, char **av)
 	(void)av;
 	g_data.bits_received = 0;
 	g_data.output = malloc(sizeof(char));
+	if (!g_data.output)
+		return (0);
 	g_data.output[0] = 0;
 	sa.sa_sigaction = signal_handler;
 	sa.sa_flags = SA_SIGINFO;
