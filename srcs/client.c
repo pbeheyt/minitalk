@@ -6,7 +6,7 @@
 /*   By: pbeheyt <pbeheyt@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/10 04:41:47 by pbeheyt           #+#    #+#             */
-/*   Updated: 2022/06/13 07:11:23 by pbeheyt          ###   ########.fr       */
+/*   Updated: 2022/06/16 23:18:40 by pbeheyt          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,11 @@ int	main(int ac, char **av)
 	signal(SIGUSR1, signal_bit_received);
 	signal(SIGUSR2, signal_input_received);
 	pid_client = ft_atoi(av[1]);
+	if (pid_client <=1)
+	{
+		ft_putstr_fd("Error : unvalid PID\n", 1);
+		return (0);
+	}
 	input = av[2];
 	i = -1;
 	while (input[++i])
